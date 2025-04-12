@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "dev/pad.h"
-#include "log.h"
+#include "lychee/dev/pad.h"
+#include "lychee/log.h"
 
 #define JOY_IRQ_DELAY 512
 

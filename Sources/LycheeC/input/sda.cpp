@@ -4,8 +4,8 @@
     Sony PlayStation Standard Digital/Analog Controller Emulator
 */
 
-#include "input/sda.h"
-#include "log.h"
+#include "lychee/input/sda.h"
+#include "lychee/log.h"
 
 #include <stdlib.h>
 #include <string.h>

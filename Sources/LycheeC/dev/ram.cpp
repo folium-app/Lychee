@@ -1,5 +1,5 @@
-#include "dev/ram.h"
-#include "log.h"
+#include "lychee/dev/ram.h"
+#include "lychee/log.h"
 
 #include <stdio.h>
 #include <string.h>

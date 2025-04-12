@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "dev/ic.h"
+#include "lychee/dev/ic.h"
 
-#include "log.h"
+#include "lychee/log.h"
 
 psx_ic_t* psx_ic_create(void) {
     return (psx_ic_t*)malloc(sizeof(psx_ic_t));

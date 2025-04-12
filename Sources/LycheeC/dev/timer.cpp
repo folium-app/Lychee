@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "dev/timer.h"
-#include "log.h"
+#include "lychee/dev/timer.h"
+#include "lychee/log.h"
 
 #define T0_COUNTER     timer->timer[0].counter
 #define T0_SYNC_EN     timer->timer[0].sync_enable

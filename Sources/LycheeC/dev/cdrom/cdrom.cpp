@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "dev/cdrom/cdrom.h"
+#include "lychee/dev/cdrom/cdrom.h"
 
 typedef void (*cdrom_cmd_func)(psx_cdrom_t* cdrom);
 

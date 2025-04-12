@@ -20,7 +20,7 @@
  * IN THE SOFTWARE.
  */
 
-#include "log.h"
+#include "lychee/log.h"
 
 #define MAX_CALLBACKS 32
 

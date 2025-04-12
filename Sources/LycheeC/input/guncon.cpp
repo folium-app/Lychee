@@ -4,8 +4,8 @@
     Sony PlayStation Standard Digital/Analog Controller Emulator
 */
 
-#include "input/guncon.h"
-#include "log.h"
+#include "lychee/input/guncon.h"
+#include "lychee/log.h"
 
 #include <stdlib.h>
 #include <string.h>

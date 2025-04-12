@@ -7,8 +7,8 @@
 #define PSX_DMAR_SIZE  0x80
 #define PSX_DMAR_END   0x1f8010ff
 
-#include "bus.h"
-#include "dev/ic.h"
+#include "lychee/bus.h"
+#include "lychee/dev/ic.h"
 
 typedef struct {
     uint32_t madr;

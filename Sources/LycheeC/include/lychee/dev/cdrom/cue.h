@@ -1,8 +1,8 @@
 #ifndef CUE_H
 #define CUE_H
 
-#include "dev/cdrom/list.h"
-#include "dev/cdrom/disc.h"
+#include "lychee/dev/cdrom/list.h"
+#include "lychee/dev/cdrom/disc.h"
 
 #include <stdint.h>
 #include <stddef.h>

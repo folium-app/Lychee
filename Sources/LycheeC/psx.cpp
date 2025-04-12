@@ -1,4 +1,4 @@
-#include "psx.h"
+#include "lychee/psx.h"
 
 psx_t* psx_create(void) {
     return (psx_t*)malloc(sizeof(psx_t));

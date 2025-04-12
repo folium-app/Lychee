@@ -3,11 +3,11 @@
 
 #include <stdint.h>
 
-#include "dev/ic.h"
-#include "dev/input.h"
-#include "dev/mcd.h"
+#include "lychee/dev/ic.h"
+#include "lychee/dev/input.h"
+#include "lychee/dev/mcd.h"
 
-#include "input/sda.h"
+#include "lychee/input/sda.h"
 
 #define PSX_PAD_BEGIN 0x1f801040
 #define PSX_PAD_SIZE  0x10

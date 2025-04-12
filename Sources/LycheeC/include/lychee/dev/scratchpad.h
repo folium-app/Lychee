@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "dev/mc1.h"
+#include "lychee/dev/mc1.h"
 
 #define PSX_SCRATCHPAD_BEGIN 0x1f800000
 #define PSX_SCRATCHPAD_SIZE  0x400

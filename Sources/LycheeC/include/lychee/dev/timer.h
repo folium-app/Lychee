@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-#include "dev/ic.h"
-#include "dev/gpu.h"
+#include "lychee/dev/ic.h"
+#include "lychee/dev/gpu.h"
 
 #define PSX_TIMER_BEGIN 0x1f801100
 #define PSX_TIMER_SIZE  0x30

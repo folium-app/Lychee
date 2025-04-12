@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "dev/mc1.h"
+#include "lychee/dev/mc1.h"
 
 #define PSX_EXP1_BEGIN 0x1f000000
 #define PSX_EXP1_SIZE  0x80000

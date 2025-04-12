@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "log.h"
-#include "dev/scratchpad.h"
+#include "lychee/log.h"
+#include "lychee/dev/scratchpad.h"
 
 psx_scratchpad_t* psx_scratchpad_create(void) {
     return (psx_scratchpad_t*)malloc(sizeof(psx_scratchpad_t));

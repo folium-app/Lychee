@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "dev/spu.h"
-#include "log.h"
+#include "lychee/dev/spu.h"
+#include "lychee/log.h"
 
 #define CLAMP(v, l, h) (((v) <= (l)) ? (l) : (((v) >= (h)) ? (h) : (v)))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))

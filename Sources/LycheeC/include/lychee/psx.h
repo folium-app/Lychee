@@ -1,9 +1,9 @@
 #ifndef PSX_H
 #define PSX_H
 
-#include "cpu.h"
-#include "log.h"
-#include "exe.h"
+#include "lychee/cpu.h"
+#include "lychee/log.h"
+#include "lychee/exe.h"
 
 #include <stdint.h>
 

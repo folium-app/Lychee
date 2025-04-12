@@ -1,10 +1,10 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "frontend/config.h"
-#include "frontend/common.h"
+#include "lychee/frontend/config.h"
+#include "lychee/frontend/common.h"
 
-#include "log.h"
+#include "lychee/log.h"
 
 static const char* g_version_text =
 #ifdef _WIN32
@@ -134,7 +134,7 @@ void psxe_cfg_load(psxe_config_t* cfg, int argc, const char* argv[]) {
         OPT_BOOLEAN ('B', "bios-folder"   , &bios_search   , "Specify a BIOS search folder", NULL, 0, 0),
         OPT_STRING  ('c', "console-source", &console_source, "Select console source (auto, null, kernel, atcons)"),
         OPT_STRING  ('e', "exp-rom"       , &exp_path      , "Specify an expansion ROM file"),
-        OPT_INTEGER ('L', "log-level"     , &log_level     , "Set log level"),
+        OPT_INTEGER ('L', "lychee/log-level"     , &log_level     , "Set log level"),
         OPT_STRING  ('M', "model"         , &model         , "Specify console model (SPCH-XXXX)", NULL, 0, 0),
         OPT_STRING  ('r', "region"        , &region        , "Specify console region"),
         OPT_INTEGER ('s', "scale"         , &scale         , "Display scaling factor", NULL, 0, 0),

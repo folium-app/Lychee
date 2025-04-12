@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "log.h"
+#include "lychee/log.h"
 
 #define PSX_BIOS_SIZE   0x80000
 #define PSX_BIOS_BEGIN  0x1fc00000

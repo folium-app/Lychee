@@ -7,7 +7,7 @@
 #ifndef GUNCON_H
 #define GUNCON_H
 
-#include "dev/input.h"
+#include "lychee/dev/input.h"
 
 /*
   __Halfword 0 (Controller Info)___________________

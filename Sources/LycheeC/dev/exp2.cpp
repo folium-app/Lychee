@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "log.h"
-#include "dev/exp2.h"
+#include "lychee/log.h"
+#include "lychee/dev/exp2.h"
 
 psx_exp2_t* psx_exp2_create(void) {
     return (psx_exp2_t*)malloc(sizeof(psx_exp2_t));

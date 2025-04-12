@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <ctype.h>
 
-#include "dev/cdrom/cue.h"
+#include "lychee/dev/cdrom/cue.h"
 
 static const char* cue_keywords[] = {
     "4CH",

@@ -3,8 +3,8 @@
 
 #include <stdlib.h>
 
-#include "frontend/argparse.h"
-#include "frontend/toml.h"
+#include "lychee/frontend/argparse.h"
+#include "lychee/frontend/toml.h"
 
 typedef struct {
     int use_args;

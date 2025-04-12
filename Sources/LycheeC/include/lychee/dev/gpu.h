@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "dev/ic.h"
+#include "lychee/dev/ic.h"
 
 #define PSX_GPU_BEGIN 0x1f801810
 #define PSX_GPU_SIZE  0x8

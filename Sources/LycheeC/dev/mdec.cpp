@@ -1,5 +1,5 @@
-#include "dev/mdec.h"
-#include "log.h"
+#include "lychee/dev/mdec.h"
+#include "lychee/log.h"
 
 #include <stdio.h>
 #include <string.h>

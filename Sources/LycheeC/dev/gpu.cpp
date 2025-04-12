@@ -3,8 +3,8 @@
 #include <string.h>
 #include <math.h>
 
-#include "dev/gpu.h"
-#include "log.h"
+#include "lychee/dev/gpu.h"
+#include "lychee/log.h"
 
 #define SE10(v) ((int16_t)((v) << 5) >> 5)
 

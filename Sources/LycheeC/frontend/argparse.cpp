@@ -10,7 +10,7 @@
 #include <string.h>
 #include <assert.h>
 #include <errno.h>
-#include "frontend/argparse.h"
+#include "lychee/frontend/argparse.h"
 
 #define OPT_UNSET 1
 #define OPT_LONG  (1 << 1)

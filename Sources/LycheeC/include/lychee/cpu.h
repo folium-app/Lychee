@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "bus.h"
+#include "lychee/bus.h"
 
 #define PSX_CPU_CPS 33868800 // 33868800 Clocks/s
 #define PSX_CPU_FREQ 33.868800f // 33.868800 MHz

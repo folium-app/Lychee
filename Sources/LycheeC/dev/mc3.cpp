@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "dev/mc3.h"
-#include "log.h"
+#include "lychee/dev/mc3.h"
+#include "lychee/log.h"
 
 psx_mc3_t* psx_mc3_create(void) {
     return (psx_mc3_t*)malloc(sizeof(psx_mc3_t));

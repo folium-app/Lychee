@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "log.h"
+#include "lychee/log.h"
 
 #define PSX_MDEC_SIZE    0x8
 #define PSX_MDEC_BEGIN   0x1f801820

@@ -1,5 +1,5 @@
-#include "dev/mcd.h"
-#include "log.h"
+#include "lychee/dev/mcd.h"
+#include "lychee/log.h"
 
 psx_mcd_t* psx_mcd_create(void) {
     return (psx_mcd_t*)malloc(sizeof(psx_mcd_t));

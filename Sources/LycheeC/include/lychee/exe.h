@@ -5,8 +5,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "cpu.h"
-#include "bus_init.h"
+#include "lychee/cpu.h"
+#include "lychee/bus_init.h"
 
 /*
 PSX executables are having an 800h-byte header, followed by the code/data.

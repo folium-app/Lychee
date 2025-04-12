@@ -1,5 +1,5 @@
-#include "dev/bios.h"
-#include "log.h"
+#include "lychee/dev/bios.h"
+#include "lychee/log.h"
 
 #include <stdio.h>
 #include <string.h>

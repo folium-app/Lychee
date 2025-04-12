@@ -1,22 +1,22 @@
 #ifndef BUS_INIT_H
 #define BUS_INIT_H
 
-#include "dev/cdrom/cdrom.h"
-#include "dev/bios.h"
-#include "dev/ram.h"
-#include "dev/dma.h"
-#include "dev/exp1.h"
-#include "dev/exp2.h"
-#include "dev/mc1.h"
-#include "dev/mc2.h"
-#include "dev/mc3.h"
-#include "dev/ic.h"
-#include "dev/scratchpad.h"
-#include "dev/gpu.h"
-#include "dev/spu.h"
-#include "dev/timer.h"
-#include "dev/pad.h"
-#include "dev/mdec.h"
+#include "lychee/dev/cdrom/cdrom.h"
+#include "lychee/dev/bios.h"
+#include "lychee/dev/ram.h"
+#include "lychee/dev/dma.h"
+#include "lychee/dev/exp1.h"
+#include "lychee/dev/exp2.h"
+#include "lychee/dev/mc1.h"
+#include "lychee/dev/mc2.h"
+#include "lychee/dev/mc3.h"
+#include "lychee/dev/ic.h"
+#include "lychee/dev/scratchpad.h"
+#include "lychee/dev/gpu.h"
+#include "lychee/dev/spu.h"
+#include "lychee/dev/timer.h"
+#include "lychee/dev/pad.h"
+#include "lychee/dev/mdec.h"
 
 struct psx_bus_t {
     psx_bios_t* bios;

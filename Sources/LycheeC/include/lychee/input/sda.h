@@ -7,7 +7,7 @@
 #ifndef SDA_H
 #define SDA_H
 
-#include "dev/input.h"
+#include "lychee/dev/input.h"
 
 // Controller/Input IDs
 #define SDA_MODEL_DIGITAL       0x41

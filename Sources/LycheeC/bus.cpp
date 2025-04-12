@@ -1,9 +1,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "bus.h"
-#include "bus_init.h"
-#include "log.h"
+#include "lychee/bus.h"
+#include "lychee/bus_init.h"
+#include "lychee/log.h"
 
 #define RANGE(v, s, e) ((v >= s) && (v < e))
 

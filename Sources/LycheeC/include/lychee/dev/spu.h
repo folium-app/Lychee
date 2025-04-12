@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "dev/ic.h"
+#include "lychee/dev/ic.h"
 
 #define PSX_SPU_BEGIN 0x1f801c00
 #define PSX_SPU_SIZE  0x400

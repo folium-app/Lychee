@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "cpu.h"
+#include "lychee/cpu.h"
 
 #define PSX_IC_BEGIN 0x1f801070
 #define PSX_IC_SIZE  0x8

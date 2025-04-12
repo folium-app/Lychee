@@ -1,5 +1,5 @@
-#include "dev/dma.h"
-#include "log.h"
+#include "lychee/dev/dma.h"
+#include "lychee/log.h"
 
 #include <stdint.h>
 #include <stdlib.h>

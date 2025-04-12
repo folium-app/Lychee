@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-#include "exe.h"
-#include "log.h"
+#include "lychee/exe.h"
+#include "lychee/log.h"
 
 int psx_exe_load(psx_cpu_t* cpu, const char* path) {
     if (!path)

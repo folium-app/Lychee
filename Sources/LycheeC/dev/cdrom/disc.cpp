@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "dev/cdrom/disc.h"
-#include "dev/cdrom/cue.h"
+#include "lychee/dev/cdrom/disc.h"
+#include "lychee/dev/cdrom/cue.h"
 
 #define MSF_TO_LBA(m, s, f) ((m * 4500) + (s * 75) + f)
 

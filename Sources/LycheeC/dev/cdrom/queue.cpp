@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "dev/cdrom/queue.h"
+#include "lychee/dev/cdrom/queue.h"
 
 queue_t* queue_create(void) {
     return (queue_t*)malloc(sizeof(queue_t));

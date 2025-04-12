@@ -25,7 +25,7 @@
 
 */
 #define _POSIX_C_SOURCE 200809L
-#include "frontend/toml.h"
+#include "lychee/frontend/toml.h"
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>

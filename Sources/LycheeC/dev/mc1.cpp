@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "dev/mc1.h"
-#include "log.h"
+#include "lychee/dev/mc1.h"
+#include "lychee/log.h"
 
 /*
   0-3   Write Delay        (00h..0Fh=01h..10h Cycles)

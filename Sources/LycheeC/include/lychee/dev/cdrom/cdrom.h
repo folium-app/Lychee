@@ -3,9 +3,9 @@
 
 #include <stdint.h>
 
-#include "dev/cdrom/queue.h"
-#include "dev/cdrom/disc.h"
-#include "dev/ic.h"
+#include "lychee/dev/cdrom/queue.h"
+#include "lychee/dev/cdrom/disc.h"
+#include "lychee/dev/ic.h"
 
 #define PSX_CDROM_BEGIN 0x1f801800
 #define PSX_CDROM_END   0x1f801803

@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "dev/cdrom/cdrom.h"
-#include "dev/spu.h"
+#include "lychee/dev/cdrom/cdrom.h"
+#include "lychee/dev/spu.h"
 
 #define ITOB(b) itob_table[b]
 

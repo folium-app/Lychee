@@ -1,11 +1,11 @@
-#include "cpu.h"
-#include "bus.h"
-#include "log.h"
+#include "lychee/cpu.h"
+#include "lychee/bus.h"
+#include "lychee/log.h"
 
 #include <stdlib.h>
 #include <string.h>
 
-#include "cpu_debug.h"
+#include "lychee/cpu_debug.h"
 
 static const uint32_t g_psx_cpu_cop0_write_mask_table[] = {
     0x00000000, // cop0r0   - N/A

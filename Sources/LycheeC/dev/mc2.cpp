@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "dev/mc2.h"
-#include "log.h"
+#include "lychee/dev/mc2.h"
+#include "lychee/log.h"
 
 psx_mc2_t* psx_mc2_create(void) {
     return (psx_mc2_t*)malloc(sizeof(psx_mc2_t));

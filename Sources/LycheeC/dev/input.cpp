@@ -1,7 +1,7 @@
 #ifndef PAD_H
 #define PAD_H
 
-#include "dev/input.h"
+#include "lychee/dev/input.h"
 
 #include <string.h>
 #include <stdlib.h>

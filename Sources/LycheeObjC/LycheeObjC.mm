@@ -9,9 +9,9 @@
 
 #include <SDL.h>
 
-#include "frontend/config.h"
-#include "psx.h"
-#include "dev/cdrom/cdrom.h"
+#include "lychee/frontend/config.h"
+#include "lychee/psx.h"
+#include "lychee/dev/cdrom/cdrom.h"
 
 #include <algorithm>
 #include <iostream>

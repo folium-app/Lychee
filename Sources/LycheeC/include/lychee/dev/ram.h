@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-#include "log.h"
-#include "dev/mc2.h"
+#include "lychee/log.h"
+#include "lychee/dev/mc2.h"
 
 #define PSX_RAM_SIZE    0x800000 // 8MB window
 #define PSX_RAM_BEGIN   0x00000000
