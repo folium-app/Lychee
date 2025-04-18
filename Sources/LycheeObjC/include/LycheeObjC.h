@@ -10,19 +10,27 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface LycheeObjC : NSObject
-@property (nonatomic, strong, nullable) void (^bufferBGR555) (uint16_t*, uint32_t, uint32_t);
-@property (nonatomic, strong, nullable) void (^bufferRGB24) (uint32_t*, uint32_t, uint32_t);
+@property (nonatomic, strong, nullable) void (^bgr555) (void*,
+                                                              uint32_t /* dsp width */,
+                                                              uint32_t /* dsp height */,
+                                                              uint32_t /* img width */,
+                                                              uint32_t /* img height */);
+@property (nonatomic, strong, nullable) void (^rgb888) (void*,
+                                                             uint32_t /* dsp width */,
+                                                             uint32_t /* dsp height */,
+                                                             uint32_t /* img width */,
+                                                             uint32_t /* img height */);
 
 +(LycheeObjC *) sharedInstance NS_SWIFT_NAME(shared());
 
--(void) insertCartridge:(NSURL *)url;
+-(void) insert:(NSURL *)url NS_SWIFT_NAME(insert(from:));
 
 -(void) step;
 -(void) stop;
 
 -(void) input:(int)slot button:(uint32_t)button pressed:(BOOL)pressed;
 
--(NSString *) gameID:(NSURL *)url;
+-(NSString *) id:(NSURL *)url NS_SWIFT_NAME(id(from:));
 @end
 
 NS_ASSUME_NONNULL_END

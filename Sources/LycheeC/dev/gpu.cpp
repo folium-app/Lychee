@@ -40,17 +40,6 @@ int max3(int a, int b, int c) {
     return (m > c) ? m : c;
 }
 
-uint32_t get_bit(uint32_t value, uint8_t bit)
-{
-    uint32_t mask = 1 << bit;
-    return (value & mask) & bit;
-}
-uint32_t get_bits(uint32_t value, uint8_t start, uint8_t count)
-{
-    uint32_t mask = (1U << count) - 1;
-    return (value >> start) & mask;
-}
-
 psx_gpu_t* psx_gpu_create(void) {
     return (psx_gpu_t*)malloc(sizeof(psx_gpu_t));
 }
@@ -67,7 +56,7 @@ void psx_gpu_init(psx_gpu_t* gpu, psx_ic_t* ic) {
     memset(gpu->empty, 0, PSX_GPU_VRAM_SIZE);
 
     gpu->state = GPU_STATE_RECV_CMD;
-    gpu->gpustat = 0x14802000;
+    gpu->gpustat |= 0x800000;
 
     // Default window size, this is not normally needed
     gpu->display_mode = 1;
@@ -123,48 +112,7 @@ uint32_t psx_gpu_read32(psx_gpu_t* gpu, uint32_t offset) {
 
             return data;
         } break;
-        case 0x04:
-        {
-            uint32_t value = 0;
-            value |= gpu->texp_x << 0;
-            value |= gpu->texp_y << 4;
-            value |= gpu->sem_transp << 5;
-            value |= gpu->texp_d << 7;
-            value |= gpu->dither << 9;
-            value |= gpu->draw_to_disp << 10;
-            value |= gpu->set_mask << 11;
-            value |= gpu->check_mask << 12;
-            value |= gpu->interlace_field << 13;
-            value |= gpu->reverse_flag << 14;
-            value |= gpu->texture_disable << 15;
-            value |= gpu->hres2 << 16;
-            value |= gpu->hres1 << 17;
-            value |= gpu->vres << 19;
-            value |= gpu->vmode << 20;
-            value |= gpu->disp_area_color_depth << 21;
-            value |= gpu->vertical_interlace << 22;
-            value |= gpu->disp_enable << 23;
-            value |= gpu->interrupt_request << 24;
-            value |= 1 << 26;
-            value |= 1 << 27;
-            value |= 1 << 28;
-            uint32_t req = 0;
-            switch (gpu->dma_dir)
-            {
-                case 0:
-                    req = 0;
-                    break;
-                case 1:
-                case 2:
-                case 3:
-                    req = 1;
-                    break;
-            }
-            value |= req << 25;
-            value |= gpu->dma_dir << 29;
-            value |= gpu->even_odd_lines << 31;
-            return value;
-        } break;
+        case 0x04: return gpu->gpustat | 0x1c000000;
     }
 
     log_warn("Unhandled 32-bit GPU read at offset %08x", offset);
@@ -288,7 +236,7 @@ void gpu_render_triangle(psx_gpu_t* gpu, vertex_t v0, vertex_t v1, vertex_t v2, 
     if (data.attrib & PA_TEXTURED) {
         transp_mode = (data.texp >> 5) & 3;
     } else {
-        transp_mode = gpu->sem_transp;
+        transp_mode = (gpu->gpustat >> 5) & 3;
     }
 
     a = v0;
@@ -483,7 +431,7 @@ void gpu_render_rect(psx_gpu_t* gpu, rect_data_t data) {
     if ((data.v0.x <= -1024) || (data.v0.y <= -512))
         return;
 
-    uint16_t width = 0, height = 0;
+    uint16_t width, height;
 
     switch ((data.attrib >> 3) & 3) {
         case RS_VARIABLE: { width = data.width; height = data.height; } break;
@@ -494,7 +442,7 @@ void gpu_render_rect(psx_gpu_t* gpu, rect_data_t data) {
 
     int textured = (data.attrib & RA_TEXTURED) != 0;
     int transp = (data.attrib & RA_TRANSP) != 0;
-    int transp_mode = gpu->sem_transp;
+    int transp_mode = (gpu->gpustat >> 5) & 3;
 
     int clutx = (data.clut & 0x3f) << 4;
     int cluty = (data.clut >> 6) & 0x1ff;
@@ -543,21 +491,21 @@ void gpu_render_rect(psx_gpu_t* gpu, rect_data_t data) {
                 if ((data.attrib & RA_TRANSP) != 0)
                     transp = (texel & 0x8000) != 0;
 
-                float tr = ((texel >> 0) & 0x1f) << 3;
-                float tg = ((texel >> 5) & 0x1f) << 3;
+                float tr = ((texel >> 0 ) & 0x1f) << 3;
+                float tg = ((texel >> 5 ) & 0x1f) << 3;
                 float tb = ((texel >> 10) & 0x1f) << 3;
 
-                float mr = (data.v0.c >> 0) & 0xff;
-                float mg = (data.v0.c >> 8) & 0xff;
+                float mr = (data.v0.c >> 0 ) & 0xff;
+                float mg = (data.v0.c >> 8 ) & 0xff;
                 float mb = (data.v0.c >> 16) & 0xff;
 
                 float cr = (tr * mr) / 128.0f;
                 float cg = (tg * mg) / 128.0f;
                 float cb = (tb * mb) / 128.0f;
 
-                cr = fminf(fmaxf(cr, 0.0f), 255.0f);
-                cg = fminf(fmaxf(cg, 0.0f), 255.0f);
-                cb = fminf(fmaxf(cb, 0.0f), 255.0f);
+                cr = (cr >= 255.0f) ? 255.0f : ((cr <= 0.0f) ? 0.0f : cr);
+                cg = (cg >= 255.0f) ? 255.0f : ((cg <= 0.0f) ? 0.0f : cg);
+                cb = (cb >= 255.0f) ? 255.0f : ((cb <= 0.0f) ? 0.0f : cb);
 
                 unsigned int ucr = roundf(cr);
                 unsigned int ucg = roundf(cg);
@@ -570,43 +518,43 @@ void gpu_render_rect(psx_gpu_t* gpu, rect_data_t data) {
                 color = BGR555(data.v0.c);
             }
 
-            float cr = ((color >> 0) & 0x1f) << 3;
-            float cg = ((color >> 5) & 0x1f) << 3;
+            float cr = ((color >> 0 ) & 0x1f) << 3;
+            float cg = ((color >> 5 ) & 0x1f) << 3;
             float cb = ((color >> 10) & 0x1f) << 3;
 
             if (transp) {
                 uint16_t back = gpu->vram[x + (y * 1024)];
 
-                float br = ((back >> 0) & 0x1f) << 3;
-                float bg = ((back >> 5) & 0x1f) << 3;
+                float br = ((back >> 0 ) & 0x1f) << 3;
+                float bg = ((back >> 5 ) & 0x1f) << 3;
                 float bb = ((back >> 10) & 0x1f) << 3;
 
                 switch (transp_mode) {
-                    case 0:
+                    case 0: {
                         cr = (0.5f * br) + (0.5f * cr);
                         cg = (0.5f * bg) + (0.5f * cg);
                         cb = (0.5f * bb) + (0.5f * cb);
-                        break;
-                    case 1:
+                    } break;
+                    case 1: {
                         cr = br + cr;
                         cg = bg + cg;
                         cb = bb + cb;
-                        break;
-                    case 2:
+                    } break;
+                    case 2: {
                         cr = br - cr;
                         cg = bg - cg;
                         cb = bb - cb;
-                        break;
-                    case 3:
+                    } break;
+                    case 3: {
                         cr = br + (0.25f * cr);
                         cg = bg + (0.25f * cg);
                         cb = bb + (0.25f * cb);
-                        break;
+                    } break;
                 }
 
-                cr = fminf(fmaxf(cr, 0.0f), 255.0f);
-                cg = fminf(fmaxf(cg, 0.0f), 255.0f);
-                cb = fminf(fmaxf(cb, 0.0f), 255.0f);
+                cr = (cr >= 255.0f) ? 255.0f : ((cr <= 0.0f) ? 0.0f : cr);
+                cg = (cg >= 255.0f) ? 255.0f : ((cg <= 0.0f) ? 0.0f : cg);
+                cb = (cb >= 255.0f) ? 255.0f : ((cb <= 0.0f) ? 0.0f : cb);
 
                 unsigned int ucr = roundf(cr);
                 unsigned int ucg = roundf(cg);
@@ -786,7 +734,7 @@ void gpu_render_flat_triangle(psx_gpu_t* gpu, vertex_t v0, vertex_t v1, vertex_t
 
     int xmin = max(min(min(a.x, b.x), c.x), gpu->draw_x1);
     int ymin = max(min(min(a.y, b.y), c.y), gpu->draw_y1);
-    int xmax = min(max(max(a.x, b.x), c.x), gpu->draw_x2); 
+    int xmax = min(max(max(a.x, b.x), c.x), gpu->draw_x2);
     int ymax = min(max(max(a.y, b.y), c.y), gpu->draw_y2);
 
     for (int y = ymin; y < ymax; y++) {
@@ -825,7 +773,7 @@ void gpu_render_shaded_triangle(psx_gpu_t* gpu, vertex_t v0, vertex_t v1, vertex
 
     int xmin = max(min(min(a.x, b.x), c.x), gpu->draw_x1);
     int ymin = max(min(min(a.y, b.y), c.y), gpu->draw_y1);
-    int xmax = min(max(max(a.x, b.x), c.x), gpu->draw_x2); 
+    int xmax = min(max(max(a.x, b.x), c.x), gpu->draw_x2);
     int ymax = min(max(max(a.y, b.y), c.y), gpu->draw_y2);
 
     int area = EDGE(a, b, c);
@@ -898,7 +846,7 @@ void gpu_render_textured_triangle(psx_gpu_t* gpu, vertex_t v0, vertex_t v1, vert
 
     int xmin = max(min(min(a.x, b.x), c.x), gpu->draw_x1);
     int ymin = max(min(min(a.y, b.y), c.y), gpu->draw_y1);
-    int xmax = min(max(max(a.x, b.x), c.x), gpu->draw_x2); 
+    int xmax = min(max(max(a.x, b.x), c.x), gpu->draw_x2);
     int ymax = min(max(max(a.y, b.y), c.y), gpu->draw_y2);
 
     uint32_t area = EDGE(a, b, c);
@@ -1817,17 +1765,11 @@ void psx_gpu_update_cmd(psx_gpu_t* gpu) {
         case 0xa0: gpu_cmd_a0(gpu); break;
         case 0xc0: gpu_cmd_c0(gpu); break;
         case 0xe1: {
-            gpu->gpustat &= 0xFFFFF800;
-            gpu->gpustat |= gpu->buf[0] & 0x7FF;
-            
-            uint32_t value = gpu->buf[0];
-            gpu->texp_x = (gpu->gpustat & 0xF) << 6;
+            gpu->gpustat &= 0xfffff800;
+            gpu->gpustat |= gpu->buf[0] & 0x7ff;
+            gpu->texp_x = (gpu->gpustat & 0xf) << 6;
             gpu->texp_y = (gpu->gpustat & 0x10) << 4;
-            gpu->sem_transp = get_bits(value, 5, 2);
-            gpu->texp_d = (gpu->gpustat >> 7) & 3;
-            gpu->dither = get_bit(gpu->buf[0], 9);
-            gpu->draw_to_disp = get_bit(gpu->buf[0], 10);
-            gpu->texture_disable = get_bit(gpu->buf[0], 11);
+            gpu->texp_d = (gpu->gpustat >> 7) & 0x3;
         } break;
         case 0xe2: {
             gpu->texw_mx = ((gpu->buf[0] >> 0 ) & 0x1f) << 3;
@@ -1849,8 +1791,6 @@ void psx_gpu_update_cmd(psx_gpu_t* gpu) {
         } break;
         case 0xe6: {
             /* To-do: Implement mask bit thing */
-            gpu->set_mask = get_bit(gpu->buf[0], 0);
-            gpu->check_mask = get_bit(gpu->buf[0], 1);
         } break;
         default: {
             // log_set_quiet(0);
@@ -1896,14 +1836,8 @@ void psx_gpu_write32(psx_gpu_t* gpu, uint32_t offset, uint32_t value) {
             uint8_t cmd = value >> 24;
 
             switch (cmd) {
-                case 0x00:
-                {
-                    gpu->gpustat = 0x14802000;
-                } break;
                 // Display enable
                 case 0x03: {
-                    gpu->disp_enable = get_bit(gpu->buf[0], 0);
-                    
                     gpu->gpustat &= ~0x00800000;
                     gpu->gpustat |= (value << 23) & 0x00800000;
                 } break;
@@ -1922,16 +1856,8 @@ void psx_gpu_write32(psx_gpu_t* gpu, uint32_t offset, uint32_t value) {
                     gpu->disp_y2 = (value >> 10) & 0x1ff;
                 } break;
                 case 0x08:
-                    gpu->hres1 = get_bits(value, 0, 2);
-                    gpu->vres = get_bit(value, 2);
-                    gpu->vmode = get_bit(value, 3);
-                    gpu->disp_area_color_depth = get_bit(value, 4);
-                    gpu->vertical_interlace = get_bit(value, 5);
-                    gpu->hres2 = get_bit(value, 6);
-                    gpu->reverse_flag = get_bit(value, 7);
-                    
                     gpu->display_mode = value & 0xffffff;
-
+                    
                     if (gpu->event_cb_table[GPU_EVENT_DMODE])
                         gpu->event_cb_table[GPU_EVENT_DMODE](gpu);
                 break;
@@ -2001,7 +1927,7 @@ void gpu_hblank_event(psx_gpu_t* gpu) {
         // - Crash Bandicoot
         // - Jackie Chan Stuntmaster
         // - etc.
-        // Masking with 7 breaks Street Fighter Alpha 2. The game 
+        // Masking with 7 breaks Street Fighter Alpha 2. The game
         // just stops sending commands to the CDROM while on
         // Player Select. It probably uses T2 IRQs to time
         // GetlocP commands, if the timer is too slow it will

@@ -4,56 +4,48 @@
 import LycheeObjC
 
 public enum PSXButton : UInt32 {
-    case select = 0x00000001
-    case l3 = 0x00000002
-    case r3 = 0x00000004
-    case start = 0x00000008
-    case dpadUp = 0x00000010
-    case dpadRight = 0x00000020
-    case dpadDown = 0x00000040
-    case dpadLeft = 0x00000080
-    case l2 = 0x00000100
-    case r2 = 0x00000200
-    case l1 = 0x00000400
-    case r1 = 0x00000800
-    case triangle = 0x00001000
-    case circle = 0x00002000
-    case cross = 0x00004000
-    case square = 0x00008000
-    // case ANALOG = 0x00010000
+    case select   = 0x01
+    case l3       = 0x02
+    case r3       = 0x04
+    case start    = 0x08
+    case up       = 0x10
+    case right    = 0x20
+    case down     = 0x40
+    case left     = 0x80
+    case l2       = 0x100
+    case r2       = 0x200
+    case l1       = 0x400
+    case r1       = 0x800
+    case triangle = 0x1000
+    case circle   = 0x2000
+    case cross    = 0x4000
+    case square   = 0x8000
+    case analog   = 0x10000
 }
+
+public typealias BufferHandler = (UnsafeMutableRawPointer, UInt32, UInt32, UInt32, UInt32) -> Void
+public typealias BGR555Handler = BufferHandler
+public typealias RGB888Handler = BufferHandler
 
 public struct Lychee : @unchecked Sendable {
     public static let shared = Lychee()
     
-    public let lycheeObjC = LycheeObjC.shared()
+    public let emulator = LycheeObjC.shared()
     
-    public func insertCartridge(from url: URL) {
-        lycheeObjC.insertCartridge(url)
-    }
+    public func insert(from url: URL) { emulator.insert(from: url) }
     
-    public func step() {
-        lycheeObjC.step()
-    }
+    public func step() { emulator.step() }
+    public func stop() { emulator.stop() }
     
-    public func stop() {
-        lycheeObjC.stop()
-    }
-    
-    public func bufferBGR555(_ buf: @escaping (UnsafeMutablePointer<UInt16>, UInt32, UInt32) -> Void) {
-        lycheeObjC.bufferBGR555 = buf
-    }
-    
-    public func bufferRGB24(_ buf: @escaping (UnsafeMutablePointer<UInt32>, UInt32, UInt32) -> Void) {
-        lycheeObjC.bufferRGB24 = buf
-    }
+    public func bgr555(_ buffer: @escaping BGR555Handler) { emulator.bgr555 = buffer }
+    public func rgb888(_ buffer: @escaping RGB888Handler) { emulator.rgb888 = buffer }
     
     public func input(_ slot: Int, _ button: PSXButton, _ pressed: Bool) {
-        lycheeObjC.input(Int32(slot), button: button.rawValue, pressed: pressed)
+        emulator.input(.init(slot), button: button.rawValue, pressed: pressed)
     }
     
-    public func gameID(from url: URL) -> String {
-        lycheeObjC.gameID(url)
+    public func id(from url: URL) -> String {
+        emulator.id(from: url)
             .replacingOccurrences(of: "_", with: "-")
             .replacingOccurrences(of: ".", with: "")
     }

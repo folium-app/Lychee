@@ -71,7 +71,9 @@ void audio_update(void* ud, uint8_t* buf, int size) {
     psx_spu_t* spu = ((psx_t*)ud)->spu;
 
     memset(buf, 0, size);
-
+    if (size <= 0)
+        return;
+    
     psx_cdrom_get_audio_samples(cdrom, buf, size);
     psx_spu_update_cdda_buffer(spu, cdrom->cdda_buf);
 
@@ -86,20 +88,73 @@ void audio_update(void* ud, uint8_t* buf, int size) {
     }
 }
 
-void psxe_gpu_dmode_event_cb(psx_gpu_t* gpu) {}
-
 psx_t* psx = nullptr;
+uint32_t mode = 0, width = 0, height = 0;
 SDL_AudioDeviceID dev;
 
+uint32_t screen_get_base_width(psx_t* psx) {
+    int width = psx_get_dmode_width(psx);
+
+    switch (width) {
+        case 256: return 256;
+        case 320: return 320;
+        case 368: return 384;
+    }
+
+    return 320;
+}
+
+void psxe_gpu_dmode_event_cb(psx_gpu_t* gpu) {
+    mode = psx_get_display_format(psx) ? 1 : 0;
+    
+    width = screen_get_base_width(psx);
+    height = 240;
+}
+
+std::vector<uint8_t> data(PSX_GPU_FB_HEIGHT * PSX_GPU_FB_WIDTH * 3);
 void psxe_gpu_vblank_event_cb(psx_gpu_t* gpu) {
-    if (psx_get_display_format(psx) == 0) {
-        if (const auto buffer = [[LycheeObjC sharedInstance] bufferBGR555]) {
-            buffer((uint16_t*)psx_get_display_buffer(psx), psx_get_display_width(psx), psx_get_display_height(psx));
+    auto dWidth = psx_get_display_width(psx);
+    auto dHeight = psx_get_display_height(psx);
+    
+    if (mode == 1) {
+        data.clear();
+        
+        // 24-bit
+        if (auto buffer = [[LycheeObjC sharedInstance] rgb888]) {
+            auto vram = static_cast<uint16_t*>(psx_get_display_buffer(psx));
+            for (int y = 0; y < PSX_GPU_FB_HEIGHT; y++) {
+                unsigned int gpuOffset = y * PSX_GPU_FB_WIDTH;
+                unsigned int texOffset = y * PSX_GPU_FB_WIDTH * 3;
+                for (int x = 0; x < PSX_GPU_FB_WIDTH; x += 3) {
+                    uint16_t c1 = vram[gpuOffset + 0];
+                    uint16_t c2 = vram[gpuOffset + 1];
+                    uint16_t c3 = vram[gpuOffset + 2];
+                    
+                    uint8_t r0 = (c1 & 0x00ff) >> 0;
+                    uint8_t g0 = (c1 & 0xff00) >> 8;
+                    uint8_t b0 = (c2 & 0x00ff) >> 0;
+                    uint8_t r1 = (c2 & 0xff00) >> 8;
+                    uint8_t g1 = (c3 & 0x00ff) >> 0;
+                    uint8_t b1 = (c3 & 0xff00) >> 8;
+                    
+                    data.at(texOffset + 0) = r0;
+                    data.at(texOffset + 1) = g0;
+                    data.at(texOffset + 2) = b0;
+                    data.at(texOffset + 3) = r1;
+                    data.at(texOffset + 4) = g1;
+                    data.at(texOffset + 5) = b1;
+                    
+                    gpuOffset += 3;
+                    texOffset += 6;
+                }
+            }
+            
+            buffer(data.data(), dWidth, dHeight, width, height);
         }
     } else {
-        if (const auto buffer = [[LycheeObjC sharedInstance] bufferRGB24]) {
-            buffer((uint32_t*)psx_get_display_buffer(psx), psx_get_display_width(psx), psx_get_display_height(psx));
-        }
+        // 15-bit
+        if (auto buffer = [[LycheeObjC sharedInstance] bgr555])
+            buffer(psx_get_display_buffer(psx), dWidth, dHeight, width, height);
     }
     
     psxe_gpu_vblank_timer_event_cb(gpu);
@@ -115,7 +170,7 @@ void psxe_gpu_vblank_event_cb(psx_gpu_t* gpu) {
     return sharedInstance;
 }
 
--(void) insertCartridge:(NSURL *)url {
+-(void) insert:(NSURL *)url {
     psxe_config_t* cfg = psxe_cfg_create();
 
     NSURL *lycheeDirectoryURL = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject] URLByAppendingPathComponent:@"Lychee"];
@@ -124,8 +179,13 @@ void psxe_gpu_vblank_event_cb(psx_gpu_t* gpu) {
     psxe_cfg_load_defaults(cfg);
     cfg->bios = [[[lycheeDirectoryURL URLByAppendingPathComponent:@"sysdata"] URLByAppendingPathComponent:@"bios.bin"].path UTF8String];
     cfg->use_args = 1;
-    cfg->cd_path = [url.path UTF8String];
+    // cfg->cd_path = [url.path UTF8String];
 
+    if ([url.pathExtension isEqualToString:@"exe"])
+        cfg->exe = [url.path UTF8String];
+    else
+        cfg->cd_path = [url.path UTF8String];
+    
     log_set_level(cfg->log_level);
 
     psx = psx_create();
@@ -142,7 +202,7 @@ void psxe_gpu_vblank_event_cb(psx_gpu_t* gpu) {
     SDL_AudioSpec obtained, desired;
 
     desired.freq     = 44100;
-    desired.format   = AUDIO_S16;
+    desired.format   = AUDIO_S16SYS;
     desired.channels = 2;
     desired.samples  = CD_SECTOR_SIZE >> 2;
     desired.callback = &audio_update;
@@ -204,7 +264,7 @@ void psxe_gpu_vblank_event_cb(psx_gpu_t* gpu) {
         psx_pad_button_release(psx_get_pad(psx), slot, button);
 }
 
--(NSString *) gameID:(NSURL *)url {
+-(NSString *) id:(NSURL *)url {
     NSString *string = @"";
     try {
         string = [NSString stringWithCString:getGameIDForLychee([url.path UTF8String]).c_str() encoding:NSUTF8StringEncoding];
