@@ -111,13 +111,12 @@ void psxe_gpu_dmode_event_cb(psx_gpu_t* gpu) {
     height = 240;
 }
 
-std::vector<uint8_t> data(PSX_GPU_FB_HEIGHT * PSX_GPU_FB_WIDTH * 3);
 void psxe_gpu_vblank_event_cb(psx_gpu_t* gpu) {
     auto dWidth = psx_get_display_width(psx);
     auto dHeight = psx_get_display_height(psx);
     
     if (mode == 1) {
-        data.clear();
+        std::vector<uint8_t> data(PSX_GPU_FB_HEIGHT * PSX_GPU_FB_WIDTH * 3);
         
         // 24-bit
         if (auto buffer = [[LycheeObjC sharedInstance] rgb888]) {
