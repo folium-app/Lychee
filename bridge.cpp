@@ -70,9 +70,6 @@ void lychee::initialize_paths(void) {
 }
 
 void lychee::initialize_system(void) {
-    FolderUtilities::SetHomeFolder(cntnr_l.lychee_path.string());
-    FolderUtilities::SetFolderOverrides({}, {}, {}, cntnr_l.system_data_path);
-    
     auto mm{std::make_unique<iOSMessageManager>()};
     MessageManager::SetOptions(false, true);
     MessageManager::RegisterMessageManager(mm.get());
@@ -100,6 +97,9 @@ void lychee::destroy_system(void) {
 
 
 void lychee::insert_disc(std::string path) {
+    FolderUtilities::SetHomeFolder(cntnr_l.lychee_path.string());
+    FolderUtilities::SetFolderOverrides({}, {}, {}, cntnr_l.system_data_path);
+    
     cntnr_l.emulator->LoadRom({path}, {});
     cntnr_l.emulator->RegisterInputProvider(cntnr_l.input.get());
 }
