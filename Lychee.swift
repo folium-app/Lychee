@@ -142,4 +142,21 @@ public actor LycheeSystem {
         
         return "https://raw.githubusercontent.com/libretro/libretro-thumbnails/refs/heads/master/Nintendo - Super Nintendo Entertainment System/Named_Boxarts/\(title).png"
     }
+    
+    
+    public nonisolated func saveStatePath(for index: Int) -> String {
+        String(lychee.save_state_path(Int32(index)))
+    }
+    
+    public func saveStateExists(for index: Int) -> Bool {
+        lychee.save_state_exists(Int32(index))
+    }
+    
+    public func saveStateLoad(for index: Int) {
+        lychee.load_state(Int32(index))
+    }
+    
+    public func saveStateSave(for index: Int) {
+        lychee.save_state(Int32(index))
+    }
 }

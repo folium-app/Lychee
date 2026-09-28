@@ -10,6 +10,7 @@
 
 #include "Shared/EmuSettings.h"
 #include "Shared/MessageManager.h"
+#include "Shared/SaveStateManager.h"
 #include "Utilities/FolderUtilities.h"
 
 #include <atomic>
@@ -198,4 +199,28 @@ void lychee::release_button(uint32_t button) {
 
 void lychee::set_context(void* context) {
     lychee::context = context;
+}
+
+
+bool lychee::save_state_exists(int index) {
+    if (const auto& save_state_manager = cntnr_l.emulator->GetSaveStateManager()) {
+        const auto& path{save_state_manager->GetSaveStatePath(index)};
+        return std::filesystem::exists(path) && std::filesystem::file_size(path) > 0;
+    } return false;
+}
+
+std::string lychee::save_state_path(int index) {
+    if (const auto& save_state_manager = cntnr_l.emulator->GetSaveStateManager()) {
+        return save_state_manager->GetSaveStatePath(index);
+    } return {};
+}
+
+void lychee::load_state(int index) {
+    if (const auto& save_state_manager = cntnr_l.emulator->GetSaveStateManager())
+        save_state_manager->LoadState(index);
+}
+
+void lychee::save_state(int index) {
+    if (const auto& save_state_manager = cntnr_l.emulator->GetSaveStateManager())
+        save_state_manager->SaveState(index);
 }
